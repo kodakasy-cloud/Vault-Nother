@@ -29,7 +29,8 @@ https://www.rust-lang.org/
 
 Category:
 Programming
-🗂️ OrganizationThe application will feature resources to facilitate content organization.PlannedCategory systemFavoritesList of recent itemsGlobal searchFiltersTrashFuture tag support🖥️ InterfaceThe interface will be built using Iced.The initial planned structure will look similar to:Plaintext┌──────────────────────────────────────────────────────┐
+🗂️ OrganizationThe application will feature resources to facilitate content organization.PlannedCategory systemFavoritesList of recent itemsGlobal searchFiltersTrashFuture tag support🖥️ InterfaceThe interface will be built using Iced.The initial planned structure will look similar to:Plaintext
+┌──────────────────────────────────────────────────────┐
 │ SIDEBAR      │         CONTENT                       │
 │              │                                       │
 │ 🏠 Home      │         Dashboard / Current Screen    │
