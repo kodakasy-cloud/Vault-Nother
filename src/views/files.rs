@@ -5,8 +5,8 @@ use iced::{Element, Padding};
 
 pub fn view(_state: &AppState) -> Element<'_, Message> {
     column![
-        text("Bem-vindo ao VaultNote!").size(32),
-        text("Sua central pessoal para guardar e organizar anotações, mídias e arquivos.").size(16),
+        text("Seção de Arquivos").size(32),
+        text("Armazene documentos importantes e arquivos de referência.").size(16),
     ]
     .spacing(15)
     .padding(Padding::new(40.0))
