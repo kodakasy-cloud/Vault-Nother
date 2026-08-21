@@ -27,6 +27,13 @@ impl App {
             Message::ToggleSidebar => {
                 self.state.sidebar_open = !self.state.sidebar_open;
             }
+            Message::CreateNewNote => {
+                let new_note_title = format!("Nota {}", self.state.notes.len() + 1);
+                self.state.notes.push(new_note_title);
+            }
+            Message::SearchChanged(query) => {
+                self.state.search_query = query;
+            }
         }
     }
 
@@ -39,7 +46,6 @@ impl App {
             _ => home::view(&self.state),
         };
 
-        // Quando o menu está fechado, usamos o Space com largura flexível para empurrar o botão para a direita
         let main_content = if !self.state.sidebar_open {
             let open_btn = button(text("Menu").size(15))
                 .on_press(Message::ToggleSidebar)
