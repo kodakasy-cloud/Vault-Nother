@@ -3,10 +3,15 @@ mod message;
 mod state;
 mod components;
 mod views;
+mod theme;
 
-use app::App;
 
 fn main() -> iced::Result {
-    // Inicia o aplicativo Iced
-    iced::run("VaultNote", App::update, App::view)
+    iced::application(
+        app::App::new,
+        app::App::update,
+        app::App::view,
+    )
+    .title("VaultNote")
+    .run()
 }

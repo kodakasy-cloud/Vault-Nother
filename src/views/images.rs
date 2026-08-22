@@ -1,106 +1,246 @@
 use crate::message::Message;
 use crate::state::AppState;
-use iced::widget::{button, column, container, row, text, text_input, Space};
-use iced::{Alignment, Element, Length, Padding};
+use crate::theme::obter_cores;
+
+use iced::widget::{
+    button,
+    column,
+    container,
+    row,
+    text,
+    text_input,
+    Space,
+};
+
+use iced::{
+    Alignment,
+    Background,
+    Border,
+    Element,
+    Length,
+    Padding,
+};
 
 pub fn view(state: &AppState) -> Element<'_, Message> {
-    // 1. Cabeçalho e Botões de Ação Rápida (Criar Pasta / Enviar Imagem)
-    let title_section = column![
-        text("Galeria de Imagens e Prints 🖼️").size(28),
-        text("Organize suas fotos, capturas de tela e mídias em pastas ou soltas.").size(15),
+
+    let cores = obter_cores(state.tema_atual);
+
+    // ============================================================
+    // CABEÇALHO
+    // ============================================================
+
+    let title = column![
+
+        text("Imagens")
+            .size(28)
+            .color(cores.texto),
+
+        text("Organize suas imagens, prints e fotografias.")
+            .size(14)
+            .color(cores.texto_secundario),
+
     ]
     .spacing(4);
 
-    let create_folder_btn = button(text("📁 Nova Pasta").size(13)).padding(10);
-    let upload_image_btn = button(text("+ Enviar Imagem").size(13)).padding(10);
-
-    let actions_row = row![
-        create_folder_btn,
-        Space::with_width(10),
-        upload_image_btn,
-    ];
+    let import_button = button(
+        text("+ Importar")
+            .size(13)
+            .color(cores.texto)
+    )
+    .padding(12);
 
     let header = row![
-        title_section,
-        Space::with_width(Length::Fill),
-        actions_row,
+
+        title,
+
+        Space::new()
+            .width(Length::Fill),
+
+        import_button,
+
     ]
     .align_y(Alignment::Center);
 
-    // 2. Barra de Pesquisa de Imagens (por nome, título ou descrição)
-    let search_bar = text_input("Pesquisar por título, nome do arquivo ou descrição...", &state.search_query)
-        .on_input(Message::SearchChanged)
-        .padding(12);
 
-    // 3. Seção de Pastas (Organização)
-    let folders_header = text("Suas Pastas").size(18);
-    let folder_card_1 = container(text("📂 Projetos Pessoais (12)").size(14)).padding(12);
-    let folder_card_2 = container(text("📂 Capturas de Tela (45)").size(14)).padding(12);
-    let folder_card_3 = container(text("📂 Wallpapers (8)").size(14)).padding(12);
+    // ============================================================
+    // PESQUISA
+    // ============================================================
 
-    let folders_row = row![
-        folder_card_1,
-        Space::with_width(10),
-        folder_card_2,
-        Space::with_width(10),
-        folder_card_3,
-    ];
-
-    let folders_section = column![
-        folders_header,
-        folders_row,
-    ]
-    .spacing(10);
-
-    // 4. Seção de Imagens Recentes / Detalhes (Título, Descrição, Data)
-    let gallery_header = text("Imagens Soltas e Recentes").size(18);
-    
-    // Simulação visual de um card de imagem contendo metadados (Título, Descrição e Data)
-    let image_meta_card = container(
-        column![
-            text("🖼️ [Pré-visualização da Imagem]").size(16),
-            text("Título: Print de Configuração do Sistema").size(14),
-            text("Descrição: Configuração otimizada para o ambiente de desenvolvimento.").size(12),
-            text("Data: 19/08/2026").size(11),
-        ]
-        .spacing(4)
+    let search = text_input(
+        "🔍 Pesquisar imagens...",
+        &state.search_query,
     )
-    .padding(14)
-    .width(Length::Fill);
-
-    let gallery_section = column![
-        gallery_header,
-        image_meta_card,
-    ]
-    .spacing(10);
-
-    // 5. Feed Rápido / Notícias do Dia relacionadas a design/mídia
-    let daily_feed_header = text("📰 Notícias e Destaques do Dia").size(18);
-    let daily_feed_card = container(
-        text("Tendências de UI/UX e organização de ativos digitais para 2026.").size(13)
-    )
+    .on_input(Message::SearchChanged)
     .padding(12)
     .width(Length::Fill);
 
-    let daily_feed_section = column![
-        daily_feed_header,
-        daily_feed_card,
-    ]
-    .spacing(8);
 
-    // 6. Layout Principal Combinando Tudo
-    column![
-        header,
-        Space::with_height(5),
-        search_bar,
-        Space::with_height(5),
-        folders_section,
-        Space::with_height(5),
-        gallery_section,
-        Space::with_height(5),
-        daily_feed_section,
+    // ============================================================
+    // TÍTULO
+    // ============================================================
+
+    let recent_title = text("Imagens recentes")
+        .size(18)
+        .color(cores.texto);
+
+
+    // ============================================================
+    // GALERIA
+    // ============================================================
+
+    let image_1 = image_placeholder(
+        "Imagem 01",
+        cores,
+    );
+
+    let image_2 = image_placeholder(
+        "Imagem 02",
+        cores,
+    );
+
+    let image_3 = image_placeholder(
+        "Imagem 03",
+        cores,
+    );
+
+    let image_4 = image_placeholder(
+        "Imagem 04",
+        cores,
+    );
+
+    let gallery = row![
+
+        image_1,
+        image_2,
+        image_3,
+        image_4,
+
     ]
-    .spacing(15)
-    .padding(Padding::new(30.0))
+    .spacing(12);
+
+
+    // ============================================================
+    // FAVORITOS
+    // ============================================================
+
+    let favorites_title = text("Favoritos")
+        .size(18)
+        .color(cores.texto);
+
+    let favorites = row![
+
+        image_placeholder(
+            "Favorito 01",
+            cores,
+        ),
+
+        image_placeholder(
+            "Favorito 02",
+            cores,
+        ),
+
+        image_placeholder(
+            "Favorito 03",
+            cores,
+        ),
+
+    ]
+    .spacing(12);
+
+
+    // ============================================================
+    // PÁGINA
+    // ============================================================
+
+    container(
+
+        column![
+
+            header,
+
+            Space::new()
+                .height(8),
+
+            search,
+
+            Space::new()
+                .height(8),
+
+            recent_title,
+
+            gallery,
+
+            Space::new()
+                .height(10),
+
+            favorites_title,
+
+            favorites,
+
+        ]
+        .spacing(10)
+        .padding(Padding::new(30.0))
+
+    )
+    .width(Length::Fill)
+    .height(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.fundo)
+        ),
+
+        ..Default::default()
+    })
+    .into()
+}
+
+
+// ================================================================
+// PLACEHOLDER DE IMAGEM
+// ================================================================
+
+fn image_placeholder<'a>(
+    name: &'a str,
+    cores: crate::theme::Cores,
+) -> Element<'a, Message> {
+
+    container(
+
+        column![
+
+            Space::new()
+                .height(55),
+
+            text("🖼")
+                .size(30),
+
+            text(name)
+                .size(12)
+                .color(cores.texto_secundario),
+
+            Space::new()
+                .height(55),
+
+        ]
+        .align_x(Alignment::Center)
+
+    )
+    .padding(10)
+    .width(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card)
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 8.0.into(),
+        },
+
+        ..Default::default()
+    })
     .into()
 }

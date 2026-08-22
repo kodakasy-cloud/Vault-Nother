@@ -1,55 +1,161 @@
 use crate::message::Message;
 use crate::state::AppState;
-use iced::widget::{button, column, text, container, row, Column};
-use iced::{Element, Length, Color};
+use crate::theme::obter_cores;
+
+use iced::widget::{button, column, container, text, Space};
+use iced::{Background, Border, Element, Length};
 
 pub fn view(state: &AppState) -> Element<'_, Message> {
-    let views = vec![
-        ("Início", "Início"),
-        ("Notas", "Notas"),
-        ("Imagens", "Imagens"),
-        ("Arquivos", "Arquivos"),
-        ("Configurações", "Configurações"),
-    ];
 
-    let mut nav_column = Column::new().spacing(8).width(Length::Fill);
+    let cores = obter_cores(state.tema_atual);
 
-    for (name, label_text) in views {
-        let _is_active = state.current_view == name;
-        
-        let label = text(label_text).size(16);
-        
-        let btn = button(label)
-            .on_press(Message::SidebarNavPressed(name))
-            .width(Length::Fill)
-            .padding(15);
+    // =========================================================
+    // TÍTULO
+    // =========================================================
 
-        nav_column = nav_column.push(btn);
-    }
+    let logo = text("VaultNote")
+        .size(22)
+        .color(cores.texto);
 
-    let header = row![
-        text("VaultNote").size(20),
-        button(text(" X ").size(15))
-            .on_press(Message::ToggleSidebar)
-            .padding(10)
-    ]
-    .spacing(40)
-    .align_y(iced::Alignment::Center);
 
-    let content = column![
-        header,
-        nav_column
-    ]
-    .spacing(25)
-    .padding(20)
-    .width(220);
+    let subtitulo = text("Seu cofre digital")
+        .size(11)
+        .color(cores.texto_secundario);
 
-    container(content)
-        .width(220)
-        .height(Length::Fill)
-        .style(|_theme| container::Style {
-            background: Some(Color::from_rgb(0.95, 0.96, 0.98).into()),
-            ..Default::default()
-        })
-        .into()
+
+    // =========================================================
+    // BOTÕES
+    // =========================================================
+
+    let btn_principal = button(
+        text("🏠  Principal")
+            .size(14)
+            .color(cores.texto)
+    )
+    .on_press(
+        Message::SidebarNavPressed("Principal")
+    )
+    .width(Length::Fill)
+    .padding(10);
+
+
+    let btn_notas = button(
+        text("📝  Notas")
+            .size(14)
+            .color(cores.texto)
+    )
+    .on_press(
+        Message::SidebarNavPressed("Notas")
+    )
+    .width(Length::Fill)
+    .padding(10);
+
+
+    let btn_imagens = button(
+        text("🖼  Imagens")
+            .size(14)
+            .color(cores.texto)
+    )
+    .on_press(
+        Message::SidebarNavPressed("Imagens")
+    )
+    .width(Length::Fill)
+    .padding(10);
+
+
+    let btn_arquivos = button(
+        text("📁  Arquivos")
+            .size(14)
+            .color(cores.texto)
+    )
+    .on_press(
+        Message::SidebarNavPressed("Arquivos")
+    )
+    .width(Length::Fill)
+    .padding(10);
+
+
+    // =========================================================
+    // CONFIGURAÇÕES
+    // =========================================================
+
+    let btn_configuracoes = button(
+        text("⚙  Configurações")
+            .size(14)
+            .color(cores.texto)
+    )
+    .on_press(
+        Message::SidebarNavPressed("Configurações")
+    )
+    .width(Length::Fill)
+    .padding(10);
+
+
+    // =========================================================
+    // FECHAR SIDEBAR
+    // =========================================================
+
+    let btn_fechar = button(
+        text("→  Fechar menu")
+            .size(13)
+            .color(cores.texto_secundario)
+    )
+    .on_press(Message::ToggleSidebar)
+    .width(Length::Fill)
+    .padding(10);
+
+
+    // =========================================================
+    // SIDEBAR
+    // =========================================================
+
+    container(
+        column![
+
+            logo,
+
+            subtitulo,
+
+            Space::new()
+                .height(25),
+
+            btn_principal,
+
+            btn_notas,
+
+            btn_imagens,
+
+            btn_arquivos,
+
+            Space::new()
+                .height(Length::Fill),
+
+            btn_configuracoes,
+
+            Space::new()
+                .height(8),
+
+            btn_fechar,
+
+        ]
+        .spacing(6)
+        .padding(15)
+    )
+    .width(230)
+    .height(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card)
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 0.0.into(),
+        },
+
+        ..Default::default()
+    })
+    .into()
 }

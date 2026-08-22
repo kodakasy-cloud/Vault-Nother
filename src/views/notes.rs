@@ -1,109 +1,243 @@
 use crate::message::Message;
 use crate::state::AppState;
-use iced::widget::{button, column, container, row, text, text_input, Space};
-use iced::{Alignment, Element, Length, Padding};
+use crate::theme::obter_cores;
+
+use iced::widget::{
+    button,
+    column,
+    container,
+    row,
+    text,
+    text_input,
+    Space,
+};
+
+use iced::{
+    Alignment,
+    Background,
+    Border,
+    Element,
+    Length,
+    Padding,
+};
 
 pub fn view(state: &AppState) -> Element<'_, Message> {
-    // 1. Cabeçalho com o título e botões de ação rápida (Diário, Nota Rápida, Link)
-    let title_section = column![
-        text("Central de Anotações e Diário 📝").size(28),
-        text("Organize pensamentos, salve links de sites, crie diários e agende compromissos.").size(15),
+
+    let cores = obter_cores(state.tema_atual);
+
+    // ============================================================
+    // CABEÇALHO
+    // ============================================================
+
+    let title = column![
+
+        text("Notas")
+            .size(28)
+            .color(cores.texto),
+
+        text("Suas ideias, informações e anotações.")
+            .size(14)
+            .color(cores.texto_secundario),
+
     ]
     .spacing(4);
 
-    let btn_diary = button(text("📖 Novo Diário").size(13)).padding(10);
-    let btn_quick = button(text("⚡ Nota Rápida").size(13)).padding(10);
-    let btn_link = button(text("🔗 Salvar Site").size(13)).padding(10);
-
-    let actions_row = row![
-        btn_diary,
-        Space::with_width(8),
-        btn_quick,
-        Space::with_width(8),
-        btn_link,
-    ];
+    let new_note_button = button(
+        text("+ Nova Nota")
+            .size(13)
+            .color(cores.texto)
+    )
+    .on_press(Message::CreateNewNote)
+    .padding(12);
 
     let header = row![
-        title_section,
-        Space::with_width(Length::Fill),
-        actions_row,
+
+        title,
+
+        Space::new()
+            .width(Length::Fill),
+
+        new_note_button,
+
     ]
     .align_y(Alignment::Center);
 
-    // 2. Barra de pesquisa de anotações
-    let search_bar = text_input("Pesquisar notas, diários, sites ou tarefas...", &state.search_query)
-        .on_input(Message::SearchChanged)
-        .padding(12);
 
-    // 3. Sistema de Personalização de Notas (Emoji, Cor, Tamanho)
-    let customization_header = text("🎨 Personalização Rápida").size(18);
-    let custom_bar = row![
-        text("Emoji: 💡").size(13),
-        Space::with_width(15),
-        text("Cor: 🟦 Azul").size(13),
-        Space::with_width(15),
-        text("Fonte: 16px").size(13),
-    ];
-    let custom_section = container(
-        column![customization_header, custom_bar].spacing(6)
+    // ============================================================
+    // PESQUISA
+    // ============================================================
+
+    let search = text_input(
+        "🔍 Pesquisar notas...",
+        &state.search_query,
     )
+    .on_input(Message::SearchChanged)
     .padding(12)
     .width(Length::Fill);
 
-    // 4. Seção de Calendário e Agendamentos
-    let calendar_title = text("📅 Calendário e Agendamentos").size(18);
-    let calendar_card = container(
-        column![
-            text("🗓️ Agosto de 2026 • 19 Quarta-feira").size(14),
-            text("Próximo evento: Reunião do projeto às 15:00").size(12),
-        ]
-        .spacing(4)
-    )
-    .padding(14)
-    .width(Length::Fill);
 
-    let calendar_section = column![calendar_title, calendar_card].spacing(8);
+    // ============================================================
+    // SEÇÃO
+    // ============================================================
 
-    // 5. Seção de Links / URLs Favoritas
-    let links_title = text("🔗 Sites e URLs Salvos").size(18);
-    let link_card = container(
-        row![
-            text("🌐 Documentação Oficial do Framework Iced").size(14),
-            Space::with_width(Length::Fill),
-            text("Acessar ↗").size(13)
-        ]
-        .align_y(Alignment::Center)
-    )
-    .padding(12)
-    .width(Length::Fill);
+    let recent_title = text("Notas recentes")
+        .size(18)
+        .color(cores.texto);
 
-    let links_section = column![links_title, link_card].spacing(8);
 
-    // 6. Bloco de Notícias do Dia a Dia
-    let news_title = text("📰 Notícias e Atualidades").size(18);
-    let news_card = container(
-        text("Dicas de produtividade: Como manter um diário de estudos eficiente e organizado.").size(13)
-    )
-    .padding(12)
-    .width(Length::Fill);
+    // ============================================================
+    // NOTAS
+    // ============================================================
 
-    let news_section = column![news_title, news_card].spacing(8);
+    let note_1 = note_card(
+        "Projeto VaultNote",
+        "Ideias para o próximo update do aplicativo...",
+        "Hoje",
+        cores,
+    );
 
-    // 7. Layout Principal Unindo Tudo
-    column![
-        header,
-        Space::with_height(5),
-        search_bar,
-        Space::with_height(5),
-        custom_section,
-        Space::with_height(5),
-        calendar_section,
-        Space::with_height(5),
-        links_section,
-        Space::with_height(5),
-        news_section,
+    let note_2 = note_card(
+        "Estudos Rust",
+        "Ownership, borrowing e gerenciamento de memória...",
+        "Ontem",
+        cores,
+    );
+
+    let note_3 = note_card(
+        "Projeto RPG",
+        "Sistema de combate e progressão do personagem...",
+        "18/08",
+        cores,
+    );
+
+    let note_4 = note_card(
+        "Banco de dados",
+        "Estrutura SQLite e organização das tabelas...",
+        "17/08",
+        cores,
+    );
+
+
+    let notes_row_1 = row![
+
+        note_1,
+        note_2,
+
     ]
-    .spacing(15)
-    .padding(Padding::new(30.0))
+    .spacing(12);
+
+    let notes_row_2 = row![
+
+        note_3,
+        note_4,
+
+    ]
+    .spacing(12);
+
+
+    // ============================================================
+    // PÁGINA
+    // ============================================================
+
+    container(
+
+        column![
+
+            header,
+
+            Space::new()
+                .height(8),
+
+            search,
+
+            Space::new()
+                .height(8),
+
+            recent_title,
+
+            notes_row_1,
+
+            notes_row_2,
+
+        ]
+        .spacing(12)
+        .padding(Padding::new(30.0))
+
+    )
+    .width(Length::Fill)
+    .height(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.fundo)
+        ),
+
+        ..Default::default()
+    })
+    .into()
+}
+
+
+// ================================================================
+// CARD DE NOTA
+// ================================================================
+
+fn note_card<'a>(
+    title: &'a str,
+    description: &'a str,
+    date: &'a str,
+    cores: crate::theme::Cores,
+) -> Element<'a, Message> {
+
+    container(
+
+        column![
+
+            text(title)
+                .size(16)
+                .color(cores.texto),
+
+            text(description)
+                .size(12)
+                .color(cores.texto_secundario),
+
+            Space::new()
+                .height(8),
+
+            row![
+
+                text(date)
+                    .size(11)
+                    .color(cores.texto_secundario),
+
+                Space::new()
+                    .width(Length::Fill),
+
+                text("•••")
+                    .size(14)
+                    .color(cores.texto_secundario),
+
+            ]
+
+        ]
+        .spacing(5)
+
+    )
+    .padding(16)
+    .width(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card)
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 10.0.into(),
+        },
+
+        ..Default::default()
+    })
     .into()
 }

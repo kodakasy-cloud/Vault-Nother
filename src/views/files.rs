@@ -1,100 +1,325 @@
 use crate::message::Message;
 use crate::state::AppState;
-use iced::widget::{button, column, container, row, text, text_input, Space};
-use iced::{Alignment, Element, Length, Padding};
+use crate::theme::obter_cores;
+
+use iced::widget::{
+    button,
+    column,
+    container,
+    row,
+    text,
+    text_input,
+    Space,
+};
+
+use iced::{
+    Alignment,
+    Background,
+    Border,
+    Element,
+    Length,
+    Padding,
+};
 
 pub fn view(state: &AppState) -> Element<'_, Message> {
-    // 1. Cabeçalho e Botões de Armazenamento (Nuvem vs PC)
-    let title_section = column![
-        text("Central de Arquivos e Mídia 📁").size(28),
-        text("Gerencie documentos, aplicativos, jogos e músicas com segurança local ou na nuvem.").size(15),
+
+    let cores = obter_cores(state.tema_atual);
+
+    // ============================================================
+    // CABEÇALHO
+    // ============================================================
+
+    let title = column![
+
+        text("Arquivos")
+            .size(28)
+            .color(cores.texto),
+
+        text("Gerencie seus documentos e arquivos.")
+            .size(14)
+            .color(cores.texto_secundario),
+
     ]
     .spacing(4);
 
-    let btn_pc = button(text("💻 Armazenar no PC").size(13)).padding(10);
-    let btn_cloud = button(text("☁️ Salvar na Nuvem").size(13)).padding(10);
-
-    let storage_row = row![
-        btn_pc,
-        Space::with_width(8),
-        btn_cloud,
-    ];
+    let new_file_button = button(
+        text("+ Novo Arquivo")
+            .size(13)
+            .color(cores.texto)
+    )
+    .padding(12);
 
     let header = row![
-        title_section,
-        Space::with_width(Length::Fill),
-        storage_row,
+
+        title,
+
+        Space::new()
+            .width(Length::Fill),
+
+        new_file_button,
+
     ]
     .align_y(Alignment::Center);
 
-    // 2. Barra de Pesquisa de Arquivos
-    let search_bar = text_input("Pesquisar arquivos, jogos, apps ou documentos...", &state.search_query)
-        .on_input(Message::SearchChanged)
-        .padding(12);
 
-    // 3. Categorias de Arquivos (Apps, Jogos, Docs, Músicas)
-    let categories_title = text("🗂️ Categorias de Armazenamento").size(18);
-    
-    let cat_apps = container(column![text("📦 Aplicativos").size(14), text("4 instalados").size(11)].spacing(2)).padding(12);
-    let cat_games = container(column![text("🎮 Jogos").size(14), text("2 salvos").size(11)].spacing(2)).padding(12);
-    let cat_docs = container(column![text("📄 Documentos").size(14), text("15 arquivos").size(11)].spacing(2)).padding(12);
-    let cat_music = container(column![text("🎵 Músicas").size(14), text("8 áudios").size(11)].spacing(2)).padding(12);
+    // ============================================================
+    // PESQUISA
+    // ============================================================
 
-    let categories_row = row![
-        cat_apps,
-        Space::with_width(10),
-        cat_games,
-        Space::with_width(10),
-        cat_docs,
-        Space::with_width(10),
-        cat_music,
-    ];
-
-    let categories_section = column![categories_title, categories_row].spacing(10);
-
-    // 4. Seção de Arquivos Recentes e Proteção por Senha
-    let recent_header = text("🕒 Arquivos Recentes e Segurança").size(18);
-    
-    let recent_card = container(
-        row![
-            column![
-                text("📄 Relatório_Final_v2.pdf").size(14),
-                text("Modificado hoje • Local: PC • 🔒 Protegido por Senha").size(11),
-            ]
-            .spacing(3),
-            Space::with_width(Length::Fill),
-            button(text("Alterar Senha").size(11)).padding(6)
-        ]
-        .align_y(Alignment::Center)
+    let search = text_input(
+        "🔍 Pesquisar arquivos...",
+        &state.search_query,
     )
-    .padding(14)
-    .width(Length::Fill);
-
-    let recent_section = column![recent_header, recent_card].spacing(10);
-
-    // 5. Feed de Notícias e Tecnologia
-    let news_title = text("📰 Notícias e Tecnologia").size(18);
-    let news_card = container(
-        text("Novas tecnologias de criptografia para armazenamento seguro de arquivos em 2026.").size(13)
-    )
+    .on_input(Message::SearchChanged)
     .padding(12)
     .width(Length::Fill);
 
-    let news_section = column![news_title, news_card].spacing(8);
 
-    // 6. Layout Principal Combinando Tudo
-    column![
-        header,
-        Space::with_height(5),
-        search_bar,
-        Space::with_height(5),
-        categories_section,
-        Space::with_height(5),
-        recent_section,
-        Space::with_height(5),
-        news_section,
+    // ============================================================
+    // PASTAS
+    // ============================================================
+
+    let folders_title = text("Pastas")
+        .size(18)
+        .color(cores.texto);
+
+    let folder_projects = folder_card(
+        "📁",
+        "Projetos",
+        cores,
+    );
+
+    let folder_studies = folder_card(
+        "📁",
+        "Estudos",
+        cores,
+    );
+
+    let folder_work = folder_card(
+        "📁",
+        "Trabalho",
+        cores,
+    );
+
+    let folder_personal = folder_card(
+        "📁",
+        "Pessoal",
+        cores,
+    );
+
+    let folders = row![
+
+        folder_projects,
+        folder_studies,
+        folder_work,
+        folder_personal,
+
     ]
-    .spacing(15)
-    .padding(Padding::new(30.0))
+    .spacing(10);
+
+
+    // ============================================================
+    // ARQUIVOS RECENTES
+    // ============================================================
+
+    let files_title = text("Arquivos recentes")
+        .size(18)
+        .color(cores.texto);
+
+    let file_1 = file_row(
+        "📄",
+        "documento.pdf",
+        "PDF",
+        "2.4 MB",
+        cores,
+    );
+
+    let file_2 = file_row(
+        "📦",
+        "projeto.zip",
+        "ZIP",
+        "18 MB",
+        cores,
+    );
+
+    let file_3 = file_row(
+        "📊",
+        "orçamento.xlsx",
+        "XLSX",
+        "1.2 MB",
+        cores,
+    );
+
+    let file_4 = file_row(
+        "📝",
+        "anotacoes.txt",
+        "TXT",
+        "8 KB",
+        cores,
+    );
+
+    let files_list = column![
+
+        file_1,
+        file_2,
+        file_3,
+        file_4,
+
+    ]
+    .spacing(2);
+
+
+    // ============================================================
+    // PÁGINA
+    // ============================================================
+
+    container(
+
+        column![
+
+            header,
+
+            Space::new()
+                .height(8),
+
+            search,
+
+            Space::new()
+                .height(8),
+
+            folders_title,
+
+            folders,
+
+            Space::new()
+                .height(5),
+
+            files_title,
+
+            files_list,
+
+        ]
+        .spacing(10)
+        .padding(Padding::new(30.0))
+
+    )
+    .width(Length::Fill)
+    .height(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.fundo)
+        ),
+
+        ..Default::default()
+    })
+    .into()
+}
+
+
+// ================================================================
+// CARD DE PASTA
+// ================================================================
+
+fn folder_card<'a>(
+    icon: &'a str,
+    name: &'a str,
+    cores: crate::theme::Cores,
+) -> Element<'a, Message> {
+
+    container(
+
+        column![
+
+            text(icon)
+                .size(25),
+
+            text(name)
+                .size(13)
+                .color(cores.texto),
+
+        ]
+        .spacing(6)
+
+    )
+    .padding(15)
+    .width(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card)
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 8.0.into(),
+        },
+
+        ..Default::default()
+    })
+    .into()
+}
+
+
+// ================================================================
+// LINHA DE ARQUIVO
+// ================================================================
+
+fn file_row<'a>(
+    icon: &'a str,
+    name: &'a str,
+    extension: &'a str,
+    size: &'a str,
+    cores: crate::theme::Cores,
+) -> Element<'a, Message> {
+
+    container(
+
+        row![
+
+            text(icon)
+                .size(22),
+
+            column![
+
+                text(name)
+                    .size(14)
+                    .color(cores.texto),
+
+                text(extension)
+                    .size(11)
+                    .color(cores.texto_secundario),
+
+            ]
+            .spacing(2),
+
+            Space::new()
+                .width(Length::Fill),
+
+            text(size)
+                .size(12)
+                .color(cores.texto_secundario),
+
+        ]
+        .align_y(Alignment::Center)
+
+    )
+    .padding(12)
+    .width(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card)
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 6.0.into(),
+        },
+
+        ..Default::default()
+    })
     .into()
 }
