@@ -1,6 +1,7 @@
 use crate::message::DesempenhoApp;
 use crate::message::TemaApp;
 use crate::message::IdiomaApp;
+use crate::message::FonteTamanhoApp;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -17,6 +18,7 @@ pub struct AppState {
     pub desempenho_atual: DesempenhoApp,
     pub tema_atual: TemaApp,
     pub idioma_atual: IdiomaApp,
+    pub fonte_tamanho_atual: FonteTamanhoApp,
 }
 
 impl Default for AppState {
@@ -34,10 +36,11 @@ impl Default for AppState {
             profile_password: String::new(),  
 
             // CONDIGURAÇÕES
-            
+
             desempenho_atual: DesempenhoApp::Medio, 
             tema_atual: TemaApp::White,    
-            idioma_atual: IdiomaApp::Portugues,     
+            idioma_atual: IdiomaApp::Portugues,  
+            fonte_tamanho_atual: FonteTamanhoApp::Normal,   
         }
     }
 }

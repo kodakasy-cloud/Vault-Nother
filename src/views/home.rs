@@ -1,6 +1,6 @@
 use crate::message::Message;
 use crate::state::AppState;
-use crate::theme::obter_cores;
+use crate::theme::{escala_fonte, obter_cores};
 
 use iced::widget::{
     button,
@@ -12,58 +12,49 @@ use iced::widget::{
     Space,
 };
 
-use iced::{
-    Alignment,
-    Background,
-    Border,
-    Element,
-    Length,
-    Padding,
-};
+use iced::{Alignment, Element, Length, Padding};
 
 pub fn view(state: &AppState) -> Element<'_, Message> {
 
-    // ============================================================
+    // ========================================================
     // TEMA
-    // ============================================================
+    // ========================================================
 
     let cores = obter_cores(state.tema_atual);
 
+    // ========================================================
+    // TAMANHO DA FONTE
+    // ========================================================
 
-    // ============================================================
-    // TÍTULO
-    // ============================================================
+    let escala = escala_fonte(state.fonte_tamanho_atual);
+
+
+    // ========================================================
+    // CABEÇALHO
+    // ========================================================
 
     let title_section = column![
 
         text("Painel Principal")
-            .size(28)
+            .size(28.0 * escala)
             .color(cores.texto),
 
         text("Sua central de notas, mídias, músicas e atualizações.")
-            .size(15)
+            .size(15.0 * escala)
             .color(cores.texto_secundario),
 
     ]
     .spacing(4);
 
 
-    // ============================================================
-    // BOTÃO NOVA NOTA
-    // ============================================================
-
     let new_note_button = button(
         text("Nova")
-            .size(13)
+            .size(13.0 * escala)
             .color(cores.texto)
     )
     .on_press(Message::CreateNewNote)
     .padding(12);
 
-
-    // ============================================================
-    // HEADER
-    // ============================================================
 
     let header = row![
 
@@ -78,97 +69,55 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .align_y(Alignment::Center);
 
 
-    // ============================================================
-    // BARRA DE PESQUISA
-    // ============================================================
+    // ========================================================
+    // PESQUISA
+    // ========================================================
 
     let search_bar = text_input(
         "Pesquisar notas, fotos, arquivos e músicas...",
-        &state.search_query,
+        &state.search_query
     )
     .on_input(Message::SearchChanged)
     .padding(12);
 
 
-    // ============================================================
-    // CLIMA - HOJE
-    // ============================================================
+    // ========================================================
+    // CLIMA
+    // ========================================================
 
     let weather_today = container(
-
         column![
 
             text("Hoje: 24°C")
-                .size(15)
+                .size(15.0 * escala)
                 .color(cores.texto),
 
             text("Parcialmente Nublado")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
         ]
         .spacing(3)
-
     )
-    .padding(12)
-    .width(Length::Fill)
-    .style(move |_| iced::widget::container::Style {
+    .padding(12);
 
-        background: Some(
-            Background::Color(cores.card)
-        ),
-
-        border: Border {
-            color: cores.borda,
-            width: 1.0,
-            radius: 8.0.into(),
-        },
-
-        ..Default::default()
-    });
-
-
-    // ============================================================
-    // PREVISÃO
-    // ============================================================
 
     let weather_forecast = container(
-
         column![
 
             text("Próximos Dias")
-                .size(15)
+                .size(15.0 * escala)
                 .color(cores.texto),
 
             text("Qui: 26°C • Sex: 22°C • Sáb: 25°C")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
         ]
         .spacing(3)
-
     )
-    .padding(12)
-    .width(Length::Fill)
-    .style(move |_| iced::widget::container::Style {
+    .padding(12);
 
-        background: Some(
-            Background::Color(cores.card)
-        ),
-
-        border: Border {
-            color: cores.borda,
-            width: 1.0,
-            radius: 8.0.into(),
-        },
-
-        ..Default::default()
-    });
-
-
-    // ============================================================
-    // LINHA DO CLIMA
-    // ============================================================
 
     let weather_row = row![
 
@@ -179,16 +128,15 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
         weather_forecast,
 
-    ]
-    .width(Length::Fill);
+    ];
 
 
-    // ============================================================
+    // ========================================================
     // MÚSICA
-    // ============================================================
+    // ========================================================
 
     let music_title = text("🎵 Música em Destaque / Vibe")
-        .size(18)
+        .size(18.0 * escala)
         .color(cores.texto);
 
 
@@ -197,14 +145,14 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         row![
 
             text("Lofi Beats para Foco & Relaxar")
-                .size(14)
+                .size(14.0 * escala)
                 .color(cores.texto),
 
             Space::new()
                 .width(Length::Fill),
 
             text("▶ Reproduzir")
-                .size(13)
+                .size(13.0 * escala)
                 .color(cores.texto_secundario),
 
         ]
@@ -212,39 +160,24 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     )
     .padding(14)
-    .width(Length::Fill)
-    .style(move |_| iced::widget::container::Style {
-
-        background: Some(
-            Background::Color(cores.card)
-        ),
-
-        border: Border {
-            color: cores.borda,
-            width: 1.0,
-            radius: 8.0.into(),
-        },
-
-        ..Default::default()
-    });
+    .width(Length::Fill);
 
 
     let music_section = column![
 
         music_title,
-
         music_card,
 
     ]
     .spacing(8);
 
 
-    // ============================================================
+    // ========================================================
     // NOTÍCIAS
-    // ============================================================
+    // ========================================================
 
     let news_title = text("Notícias e Destaques")
-        .size(18)
+        .size(18.0 * escala)
         .color(cores.texto);
 
 
@@ -252,53 +185,34 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
         column![
 
-            text(
-                "VaultNote ganha suporte completo a organização de mídias pesadas."
-            )
-            .size(14)
-            .color(cores.texto),
+            text("VaultNote ganha suporte completo a organização de mídias pesadas.")
+                .size(14.0 * escala)
+                .color(cores.texto),
 
-            text(
-                "Confira as dicas de produtividade da semana para aproveitar ao máximo sua central."
-            )
-            .size(12)
-            .color(cores.texto_secundario),
+            text("Confira as dicas de produtividade da semana para aproveitar ao máximo sua central.")
+                .size(12.0 * escala)
+                .color(cores.texto_secundario),
 
         ]
         .spacing(4)
 
     )
     .padding(14)
-    .width(Length::Fill)
-    .style(move |_| iced::widget::container::Style {
-
-        background: Some(
-            Background::Color(cores.card)
-        ),
-
-        border: Border {
-            color: cores.borda,
-            width: 1.0,
-            radius: 8.0.into(),
-        },
-
-        ..Default::default()
-    });
+    .width(Length::Fill);
 
 
     let news_section = column![
 
         news_title,
-
         news_card,
 
     ]
     .spacing(8);
 
 
-    // ============================================================
-    // PÁGINA PRINCIPAL
-    // ============================================================
+    // ========================================================
+    // PÁGINA
+    // ========================================================
 
     container(
 
@@ -333,13 +247,15 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     )
     .width(Length::Fill)
     .height(Length::Fill)
+
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.fundo)
+            iced::Background::Color(cores.fundo)
         ),
 
         ..Default::default()
     })
+
     .into()
 }

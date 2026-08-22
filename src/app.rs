@@ -94,6 +94,9 @@ impl App {
             Message::MudarDesempenho(novo_nivel) => {
                 self.state.desempenho_atual = novo_nivel;
             }
+            Message::MudarTamanhoFonte(novo_tamanho) => {
+                self.state.fonte_tamanho_atual = novo_tamanho;
+            }
         }
     }
 

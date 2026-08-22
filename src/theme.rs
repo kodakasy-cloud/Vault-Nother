@@ -1,7 +1,16 @@
 use iced::Color;
 
 use crate::message::TemaApp;
+use crate::message::FonteTamanhoApp;
 
+pub fn escala_fonte(tamanho: FonteTamanhoApp) -> f32 {
+    match tamanho {
+        FonteTamanhoApp::Pequeno => 0.90,
+        FonteTamanhoApp::Normal => 1.00,
+        FonteTamanhoApp::Grande => 1.15,
+        FonteTamanhoApp::MuitoGrande => 1.30,
+    }
+}
 #[derive(Debug, Clone, Copy)]
 pub struct Cores {
     pub fundo: Color,

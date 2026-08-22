@@ -72,6 +72,30 @@ impl std::fmt::Display for IdiomaApp {
     }
 }
 
+
+// TAMANHO DA FONTE
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FonteTamanhoApp {
+    Pequeno,
+    Normal,
+    Grande,
+    MuitoGrande,
+}
+
+impl std::fmt::Display for FonteTamanhoApp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let nome = match self {
+            FonteTamanhoApp::Pequeno => "Pequeno",
+            FonteTamanhoApp::Normal => "Normal",
+            FonteTamanhoApp::Grande => "Grande",
+            FonteTamanhoApp::MuitoGrande => "Muito grande",
+        };
+
+        write!(f, "{nome}")
+    }
+}
+
 // PRINCIPAL
 
 #[derive(Debug, Clone)]
@@ -92,6 +116,7 @@ pub enum Message {
 
     MudarDesempenho(DesempenhoApp),
     MudarTema(TemaApp),
-    MudarIdioma(IdiomaApp)
+    MudarIdioma(IdiomaApp),
+    MudarTamanhoFonte(FonteTamanhoApp),
 
 }

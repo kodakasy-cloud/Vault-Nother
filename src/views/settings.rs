@@ -1,9 +1,15 @@
 use crate::message::Message;
 use crate::state::AppState;
-use crate::theme::obter_cores;
-use crate::message::{DesempenhoApp, TemaApp, IdiomaApp};
+use crate::theme::{escala_fonte, obter_cores};
 
-use iced::{Alignment, Background, Border, Color, Element, Length, Padding, Shadow};
+use crate::message::{
+    DesempenhoApp,
+    FonteTamanhoApp,
+    IdiomaApp,
+    TemaApp,
+};
+
+use iced::{Alignment, Background, Border, Element, Length, Padding, Shadow};
 
 use iced::widget::{
     button,
@@ -19,10 +25,17 @@ use iced::widget::{
 pub fn view(state: &AppState) -> Element<'_, Message> {
 
     // ============================================================
-    // TEMA ATUAL
+    // TEMA
     // ============================================================
 
     let cores = obter_cores(state.tema_atual);
+
+    // ============================================================
+    // TAMANHO DA FONTE
+    // ============================================================
+
+    let escala = escala_fonte(state.fonte_tamanho_atual);
+
 
     // ============================================================
     // CABEÇALHO
@@ -31,15 +44,16 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     let title_section = column![
 
         text("Configurações e Preferências")
-            .size(24)
+            .size(24.0 * escala)
             .color(cores.texto),
 
         text("Gerencie sua conta, aparência e desempenho do aplicativo.")
-            .size(13)
+            .size(13.0 * escala)
             .color(cores.texto_secundario),
 
     ]
     .spacing(2);
+
 
     let header = row![
         title_section,
@@ -52,13 +66,13 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     // ============================================================
 
     let profile_title = text("Criar Perfil de Usuário")
-        .size(15)
+        .size(15.0 * escala)
         .color(cores.texto);
 
 
     let input_nome = text_input(
         "Nome completo...",
-        &state.profile_name
+        &state.profile_name,
     )
     .on_input(Message::ProfileNameChanged)
     .padding(10);
@@ -66,7 +80,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let input_email = text_input(
         "E-mail (ex: user@vaultnote.com)...",
-        &state.profile_email
+        &state.profile_email,
     )
     .on_input(Message::ProfileEmailChanged)
     .padding(10);
@@ -74,7 +88,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let input_senha = text_input(
         "Senha de acesso...",
-        &state.profile_password
+        &state.profile_password,
     )
     .on_input(Message::ProfilePasswordChanged)
     .secure(true)
@@ -83,8 +97,8 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let btn_criar_perfil = button(
         text("Criar Perfil")
-            .size(13)
-            .color(cores.texto)
+            .size(13.0 * escala)
+            .color(cores.texto),
     )
     .padding(10);
 
@@ -94,7 +108,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         column![
 
             text("Insira seus dados para registrar um novo perfil local:")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
             Space::new()
@@ -114,12 +128,12 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
                 Space::new()
                     .width(Length::Fill),
 
-                btn_criar_perfil
+                btn_criar_perfil,
 
-            ]
+            ],
 
         ]
-        .spacing(8)
+        .spacing(8),
 
     )
     .padding(14)
@@ -127,7 +141,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.card)
+            Background::Color(cores.card),
         ),
 
         border: Border {
@@ -144,7 +158,77 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let profile_section = column![
         profile_title,
-        profile_card
+        profile_card,
+    ]
+    .spacing(5);
+
+
+    // ============================================================
+    // TAMANHO DA FONTE
+    // ============================================================
+
+    let fonte_title = text("Tamanho da Interface")
+        .size(15.0 * escala)
+        .color(cores.texto);
+
+
+    let tamanhos_fonte = [
+        FonteTamanhoApp::Pequeno,
+        FonteTamanhoApp::Normal,
+        FonteTamanhoApp::Grande,
+        FonteTamanhoApp::MuitoGrande,
+    ];
+
+
+    let seletor_fonte = pick_list(
+        tamanhos_fonte,
+        Some(state.fonte_tamanho_atual),
+        Message::MudarTamanhoFonte,
+    )
+    .placeholder("Selecione o tamanho...");
+
+
+    let fonte_card = container(
+
+        column![
+
+            text("Tamanho das letras:")
+                .size(12.0 * escala)
+                .color(cores.texto_secundario),
+
+            seletor_fonte,
+
+            text("Aumente o tamanho da interface para facilitar a leitura.")
+                .size(11.0 * escala)
+                .color(cores.texto_secundario),
+
+        ]
+        .spacing(6),
+
+    )
+    .padding(12)
+    .width(Length::Fill)
+    .style(move |_| iced::widget::container::Style {
+
+        background: Some(
+            Background::Color(cores.card),
+        ),
+
+        border: Border {
+            color: cores.borda,
+            width: 1.0,
+            radius: 8.0.into(),
+        },
+
+        shadow: Shadow::default(),
+
+        ..Default::default()
+    });
+
+
+    let fonte_section = column![
+        fonte_title,
+        fonte_card,
     ]
     .spacing(5);
 
@@ -154,7 +238,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     // ============================================================
 
     let appearance_title = text("Aparência e Acessibilidade")
-        .size(15)
+        .size(15.0 * escala)
         .color(cores.texto);
 
 
@@ -177,13 +261,13 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         column![
 
             text("Tema do Aplicativo:")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
             seletor_tema,
 
         ]
-        .spacing(6)
+        .spacing(6),
 
     )
     .padding(12)
@@ -191,7 +275,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.card)
+            Background::Color(cores.card),
         ),
 
         border: Border {
@@ -208,7 +292,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let appearance_section = column![
         appearance_title,
-        appearance_card
+        appearance_card,
     ]
     .spacing(5);
 
@@ -218,7 +302,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     // ============================================================
 
     let performance_title = text("Desempenho e Economia")
-        .size(15)
+        .size(15.0 * escala)
         .color(cores.texto);
 
 
@@ -243,13 +327,13 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         column![
 
             text("Perfil de efeitos visuais e desempenho:")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
             seletor_desempenho,
 
         ]
-        .spacing(6)
+        .spacing(6),
 
     )
     .padding(12)
@@ -257,7 +341,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.card)
+            Background::Color(cores.card),
         ),
 
         border: Border {
@@ -274,7 +358,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let performance_section = column![
         performance_title,
-        performance_card
+        performance_card,
     ]
     .spacing(5);
 
@@ -284,7 +368,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     // ============================================================
 
     let language_title = text("Idioma e Localidade")
-        .size(15)
+        .size(15.0 * escala)
         .color(cores.texto);
 
 
@@ -308,13 +392,13 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         column![
 
             text("Idioma da Interface:")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto_secundario),
 
             seletor_idioma,
 
         ]
-        .spacing(6)
+        .spacing(6),
 
     )
     .padding(12)
@@ -322,7 +406,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.card)
+            Background::Color(cores.card),
         ),
 
         border: Border {
@@ -339,7 +423,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let language_section = column![
         language_title,
-        language_card
+        language_card,
     ]
     .spacing(5);
 
@@ -349,7 +433,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     // ============================================================
 
     let support_title = text("Suporte e Sobre")
-        .size(15)
+        .size(15.0 * escala)
         .color(cores.texto);
 
 
@@ -358,15 +442,15 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
         column![
 
             text("Central de Ajuda e FAQ")
-                .size(12)
+                .size(12.0 * escala)
                 .color(cores.texto),
 
             text("Versão do Aplicativo: v1.2.0 (Build 2026)")
-                .size(11)
+                .size(11.0 * escala)
                 .color(cores.texto_secundario),
 
         ]
-        .spacing(2)
+        .spacing(2),
 
     )
     .padding(12)
@@ -374,7 +458,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.card)
+            Background::Color(cores.card),
         ),
 
         border: Border {
@@ -391,7 +475,7 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
     let support_section = column![
         support_title,
-        support_card
+        support_card,
     ]
     .spacing(5);
 
@@ -411,6 +495,8 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
             profile_section,
 
+            fonte_section,
+
             appearance_section,
 
             performance_section,
@@ -421,16 +507,15 @@ pub fn view(state: &AppState) -> Element<'_, Message> {
 
         ]
         .spacing(12)
-        .padding(Padding::new(24.0))
+        .padding(Padding::new(24.0)),
 
     )
     .width(Length::Fill)
     .height(Length::Fill)
-
     .style(move |_| iced::widget::container::Style {
 
         background: Some(
-            Background::Color(cores.fundo)
+            Background::Color(cores.fundo),
         ),
 
         ..Default::default()
